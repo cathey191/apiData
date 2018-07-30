@@ -1,8 +1,8 @@
 google.charts.load('current', { packages: ['corechart'] });
 google.charts.setOnLoadCallback(getJSON);
 
+// get JSON using pure JS
 function getJSON() {
-	// getting JSON using pure JS
 	var xhttp = new XMLHttpRequest();
 
 	xhttp.onreadystatechange = function() {
@@ -24,7 +24,14 @@ function getJSON() {
 	xhttp.send();
 }
 
+// get data from JSON
 function dataList(mockData) {
+	gender(mockData);
+	color(mockData);
+}
+
+// count genders
+function gender(mockData) {
 	var list = document.getElementById('data');
 	var female = [];
 	var male = [];
@@ -40,6 +47,20 @@ function dataList(mockData) {
 	pieChart(female, male);
 }
 
+function color(mockData) {
+	var colors = [];
+	for (var i = 0; i < mockData.length; i++) {
+		console.log(mockData[i]);
+		for (var j = 0; j < colors.length; j++) {
+			if (!(mockData[i].color === colors[j])) {
+				colors.push(mockData[i].color);
+			}
+		}
+	}
+	// console.log(colors);
+}
+
+// create pie chart
 function pieChart(data1, data2) {
 	var data = google.visualization.arrayToDataTable([
 		['Gender', 'Totel'],
