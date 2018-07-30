@@ -2,7 +2,8 @@ h1 {
 	text-align: center;
 }
 
-#piechart {
+#piechart,
+#columnDiv {
 	margin: 0 auto;
 	width: 750px;
 	height: 750px;

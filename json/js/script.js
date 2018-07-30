@@ -47,17 +47,51 @@ function gender(mockData) {
 	pieChart(female, male);
 }
 
+// find all colors
 function color(mockData) {
 	var colors = [];
-	for (var i = 0; i < mockData.length; i++) {
-		console.log(mockData[i]);
+	colors.push(mockData[0].color);
+	for (var i = 1; i < mockData.length; i++) {
+		// console.log(mockData[i]);
+		var fail = [];
 		for (var j = 0; j < colors.length; j++) {
 			if (!(mockData[i].color === colors[j])) {
+				fail.push(1);
+			}
+			if (fail.length === colors.length) {
 				colors.push(mockData[i].color);
 			}
 		}
 	}
-	// console.log(colors);
+	totalColors(colors, mockData);
+}
+
+// create column chart, using colors totals
+function totalColors(colors, mockData) {
+	const data = new google.visualization.DataTable();
+	data.addColumn('string', 'Color');
+	data.addColumn('number', 'Count');
+
+	for (var i = 0; i < colors.length; i++) {
+		var totalColor = [];
+		for (var j = 0; j < mockData.length; j++) {
+			if (colors[i] === mockData[j].color) {
+				totalColor.push(1);
+			}
+		}
+		data.addRow([colors[i], totalColor.length]);
+	}
+
+	// style options
+	const options = {
+		title: 'Total Fav Colours'
+	};
+
+	// create chart
+	const chart = new google.visualization.ColumnChart(
+		document.getElementById('columnDiv')
+	);
+	chart.draw(data, options);
 }
 
 // create pie chart
