@@ -20,12 +20,11 @@ function getKey() {
 
 function getData(thing) {
 	$.ajax({
-		url: 'https://dweet.io:443/get/dweets/for/' + thing,
+		url: 'https://dweet.io:443/get/latest/dweet/for/' + thing,
 		dataType: 'json',
 		type: 'GET',
 		success: function(data) {
-			console.log(data);
-			drawChart(data);
+			drawChart(data, thing);
 		},
 		error: function(error) {
 			console.log('Error');
@@ -34,7 +33,7 @@ function getData(thing) {
 	});
 }
 
-function drawChart(dataJSON) {
+function drawChart(dataJSON, thing) {
 	// console.log(data.with['0'].content);
 	const data = new google.visualization.DataTable();
 
@@ -43,14 +42,7 @@ function drawChart(dataJSON) {
 	data.addColumn('number', 'Humidity');
 	data.addColumn('number', 'Temperature');
 
-	for (var i = 0; i < dataJSON.with.length; i++) {
-		data.addRow([
-			dataJSON.with[i].content.Count,
-			dataJSON.with[i].content.Battery,
-			dataJSON.with[i].content.Humidity,
-			dataJSON.with[i].content.Temperature
-		]);
-	}
+	addRows(data, dataJSON);
 
 	var options = {
 		title: 'Company Performance',
@@ -63,4 +55,38 @@ function drawChart(dataJSON) {
 	);
 
 	chart.draw(data, options);
+
+	setInterval(function() {
+		listenToJSON(thing, data, chart, options);
+	}, 3000);
+}
+
+function addRows(data, dataJSON) {
+	data.addRow([
+		dataJSON.with[0].content.Count,
+		dataJSON.with[0].content.Battery,
+		dataJSON.with[0].content.Humidity,
+		dataJSON.with[0].content.Temperature
+	]);
+}
+
+function drawChart(data, options, chart) {
+	chart.draw(data, options);
+}
+
+function listenToJSON(thing, data, chart, options) {
+	$.ajax({
+		url: 'https://dweet.io:443/get/latest/dweet/for/' + thing,
+		dataType: 'json',
+		type: 'GET',
+		success: function(dataJSON) {
+			console.log('test');
+			addRows(data, dataJSON);
+			drawChart(data, options, chart);
+		},
+		error: function(error) {
+			console.log('Error');
+			console.log(error);
+		}
+	});
 }
