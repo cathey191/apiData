@@ -8,6 +8,7 @@ function getData() {
 		type: 'GET',
 		success: function(data) {
 			drawChart(data);
+			getNews();
 		},
 		error: function(error) {
 			console.log('Error');
@@ -24,7 +25,7 @@ function drawChart(dataJSON) {
 	data.addColumn('number', 'Coordinates');
 	data.addColumn('number', 'Coordinates');
 	data.addColumn('string', 'Volcano Title');
-	data.addColumn('number', 'Temperature');
+	data.addColumn('number', 'Level');
 
 	for (var i = 0; i < dataJSON.features.length; i++) {
 		data.addRow([
@@ -52,4 +53,34 @@ function drawChart(dataJSON) {
 	);
 
 	chart.draw(data, options);
+}
+
+function getNews() {
+	$.ajax({
+		url: 'https://api.geonet.org.nz/news/geonet',
+		dataType: 'json',
+		type: 'GET',
+		success: function(data) {
+			displayNews(data);
+		},
+		error: function(error) {
+			console.log('Error');
+			console.log(error);
+		}
+	});
+}
+
+function displayNews(dataJSON) {
+	for (var i = 0; i < dataJSON.feed.length; i++) {
+		newElement(dataJSON.feed[i].title, i);
+	}
+}
+
+function newElement(feed, i) {
+	document
+		.getElementById('news')
+		.insertAdjacentHTML(
+			'beforeend',
+			'<div class="news">' + feed + '</div><br>'
+		);
 }
